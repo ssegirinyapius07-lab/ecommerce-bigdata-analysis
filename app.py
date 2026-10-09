@@ -364,8 +364,15 @@ with quality_tab:
     with st.expander("Preview source records"):
         st.dataframe(source_data.head(100), use_container_width=True, hide_index=True)
 
-st.caption(
-    "Source: UCI Online Retail historical transaction data. December 2011 is incomplete "
-    "in this dataset (records end on 9 December 2011). Results describe this source "
-    "dataset and should not be interpreted as current market conditions."
-)
+source_name_normalised = source_label.casefold().replace("_", " ")
+if "online retail" in source_name_normalised:
+    st.caption(
+        f"Source: {source_label}. The UCI Online Retail datasets end on 9 December 2011, "
+        "so December 2011 is incomplete. Results describe this historical dataset, "
+        "not current market conditions."
+    )
+else:
+    st.caption(
+        f"Source: {source_label}. Results describe the selected transaction file "
+        "and should not be interpreted as current market conditions."
+    )
