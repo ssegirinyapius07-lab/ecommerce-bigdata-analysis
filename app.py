@@ -68,7 +68,7 @@ if uploaded_file is not None:
             uploaded_file.name, uploaded_file.getvalue()
         )
         source_label = uploaded_file.name
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - file parsers raise several exception types.
         st.error(f"Unable to read the uploaded file: {error}")
         st.stop()
 elif DEFAULT_DATASET.is_file():
@@ -77,7 +77,7 @@ elif DEFAULT_DATASET.is_file():
             str(DEFAULT_DATASET), DEFAULT_DATASET.stat().st_mtime
         )
         source_label = str(DEFAULT_DATASET.relative_to(PROJECT_ROOT))
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001 - file parsers raise several exception types.
         st.error(f"Unable to read the local dataset: {error}")
         st.stop()
 else:
