@@ -200,3 +200,114 @@ def top_products_summary(data: pd.DataFrame, limit: int = 10) -> pd.DataFrame:
         .reset_index(drop=True)
     )
     return products
+
+
+
+def country_sales_summary(data: pd.DataFrame) -> pd.DataFrame:
+    """Rank countries by qualifying sales value and supporting activity metrics."""
+    _require_prepared_transactions(data)
+    if "Country" not in data.columns:
+        raise ValueError("Country analysis requires a Country column")
+
+    sales = data.loc[data["IsSaleLine"]].dropna(subset=["Country"]).copy()
+    sales["Country"] = sales["Country"].astype("string").str.strip()
+    sales = sales.loc[sales["Country"].ne("")]
+    columns = ["Country", "SalesValue", "SalesLines", "InvoiceCount"]
+    if "CustomerID" in sales.columns:
+        columns.append("CustomerCount")
+    if sales.empty:
+        return pd.DataFrame(columns=columns)
+
+    aggregations = {
+        "SalesValue": ("SalesValue", "sum"),
+        "SalesLines": ("SalesValue", "size"),
+        "InvoiceCount": ("InvoiceNo", "nunique"),
+    }
+    if "CustomerID" in sales.columns:
+        aggregations["CustomerCount"] = ("CustomerID", "nunique")
+
+    return (
+        sales.groupby("Country", as_index=False)
+        .agg(**aggregations)
+        .sort_values("SalesValue", ascending=False)
+        .reset_index(drop=True)
+    )
+
+
+def customer_rfm_summary(data: pd.DataFrame) -> pd.DataFrame:
+    """Build a basic Recency, Frequency, Monetary (RFM) table for identified customers.
+
+    Recency is measured in days from one day after the latest qualifying sale date.
+    Frequency is the number of distinct invoices, and Monetary is qualifying sales
+    line value. Missing customer IDs are omitted from this customer-level table.
+    """
+    _require_prepared_transactions(data)
+    if "CustomerID" not in data.columns:
+        raise ValueError("Customer analysis requires a CustomerID column")
+
+    sales = data.loc[data["IsSaleLine"]].dropna(subset=["CustomerID"]).copy()
+    columns = [
+        "CustomerID",
+        "LastPurchase",
+        "RecencyDays",
+        "Frequency",
+        "Monetary",
+        "AverageInvoiceValue",
+    ]
+    if sales.empty:
+        return pd.DataFrame(columns=columns)
+
+    snapshot_date = sales["InvoiceDate"].max().normalize() + pd.Timedelta(days=1)
+    customers = (
+        sales.groupby("CustomerID", as_index=False)
+        .agg(
+            LastPurchase=("InvoiceDate", "max"),
+            Frequency=("InvoiceNo", "nunique"),
+            Monetary=("SalesValue", "sum"),
+        )
+    )
+    customers["RecencyDays"] = (
+        snapshot_date - customers["LastPurchase"].dt.normalize()
+    ).dt.days
+    customers["AverageInvoiceValue"] = (
+        customers["Monetary"] / customers["Frequency"].where(customers["Frequency"] > 0)
+    )
+    customers = customers[columns]
+    return customers.sort_values(
+        ["Monetary", "Frequency"], ascending=[False, False]
+    ).reset_index(drop=True)
+
+
+def high_quantity_lines(
+    data: pd.DataFrame, minimum_quantity: int = 1000
+) -> pd.DataFrame:
+    """Find unusually high-quantity qualifying sales lines for manual review.
+
+    This function only flags potential exceptions. It does not remove records
+    or claim that a flagged order is erroneous.
+    """
+    _require_prepared_transactions(data)
+    if minimum_quantity < 1:
+        raise ValueError("minimum_quantity must be at least 1")
+
+    columns = [
+        name
+        for name in (
+            "InvoiceDate",
+            "InvoiceNo",
+            "StockCode",
+            "Description",
+            "Quantity",
+            "UnitPrice",
+            "SalesValue",
+            "CustomerID",
+            "Country",
+        )
+        if name in data.columns
+    ]
+    flagged = data.loc[
+        data["IsSaleLine"] & data["Quantity"].ge(minimum_quantity), columns
+    ].copy()
+    return flagged.sort_values(
+        ["Quantity", "SalesValue"], ascending=[False, False]
+    ).reset_index(drop=True)
