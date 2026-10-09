@@ -1,7 +1,7 @@
 """Reusable CSV and Excel transaction-data loading utilities."""
 
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import BinaryIO
 
 import pandas as pd
