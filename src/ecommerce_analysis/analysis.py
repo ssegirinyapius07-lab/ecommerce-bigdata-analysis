@@ -47,8 +47,8 @@ def prepare_transactions(data: pd.DataFrame) -> pd.DataFrame:
 def build_quality_summary(data: pd.DataFrame) -> Mapping[str, int]:
     """Return basic quality indicators without silently changing the input."""
     summary = {
-        "rows": int(len(data)),
-        "columns": int(len(data.columns)),
+        "rows": len(data),
+        "columns": len(data.columns),
         "duplicate_rows": int(data.duplicated().sum()),
         "missing_cells": int(data.isna().sum().sum()),
     }
