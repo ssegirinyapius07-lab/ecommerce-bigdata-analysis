@@ -89,6 +89,8 @@ Start the dashboard after placing the workbook in `data/raw/`:
 
 The dataset can also be selected through the dashboard's upload control. The local workbook is preferred for repeated analysis.
 
+An optional larger source is the [UCI Online Retail II dataset](https://archive.ics.uci.edu/dataset/502/online+retail+ii), which contains 1,067,371 historical transaction records across two Excel worksheets. The loader standardises common alternative headers such as `Invoice`, `Price`, and `Customer ID`, and combines worksheets that contain transaction fields. Upload the original `.xlsx` workbook or a compatible CSV export; the combined dataset may take longer to load and analyse than the smaller Online Retail file.
+
 ## Data interpretation
 
 The first dashboard uses the term **qualifying sales line value** for the sum of line values on non-cancellation rows with a positive quantity, a non-negative unit price, and a valid invoice date. It is not presented as final net revenue: returns and cancelled invoices are identified separately so that their treatment can be reviewed explicitly. Any later data cleaning will be documented and tested rather than silently discarding records.
