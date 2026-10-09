@@ -75,8 +75,8 @@ py -3.14 -m venv .venv
 Inspect data quality and then print a first sales summary after placing the workbook in `data/raw/`:
 
 ```powershell
-.\\.venv\\Scripts\\python.exe src\\inspect_data.py
-.\\.venv\\Scripts\\python.exe src\\analyze_data.py
+.\.venv\Scripts\python.exe src\inspect_data.py
+.\.venv\Scripts\python.exe src\analyze_data.py
 ```
 
 Start the dashboard after placing the workbook in `data/raw/`:
