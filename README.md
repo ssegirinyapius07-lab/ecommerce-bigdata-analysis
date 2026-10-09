@@ -51,6 +51,8 @@ ecommerce-bigdata-analysis/
 │   ├── test_analysis.py
 │   └── test_data_loader.py
 ├── app.py
+├── src/inspect_data.py
+├── src/analyze_data.py
 ├── pyproject.toml
 ├── requirements.txt
 ├── requirements-dev.txt
@@ -68,6 +70,13 @@ py -3.14 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 .\.venv\Scripts\python.exe -m pytest
 .\.venv\Scripts\python.exe -m ruff check .
+```
+
+Inspect data quality and then print a first sales summary after placing the workbook in `data/raw/`:
+
+```powershell
+.\\.venv\\Scripts\\python.exe src\\inspect_data.py
+.\\.venv\\Scripts\\python.exe src\\analyze_data.py
 ```
 
 Start the dashboard after placing the workbook in `data/raw/`:
@@ -95,4 +104,4 @@ Customer identifiers can be missing in the source data. Customer counts and cust
 
 ## Project status
 
-Initial project foundation: reusable CSV/Excel loading, baseline analysis helpers, dashboard overview, automated tests, and CI checks. Additional analysis and the Spark stage will be developed incrementally.
+Initial analysis stage: reusable CSV/Excel loading, explicit quality indicators, qualifying-sales summaries, monthly aggregation, ranked products, the dashboard baseline, automated tests, and CI checks. Analysis rules are being extended incrementally and the Spark stage remains planned.
