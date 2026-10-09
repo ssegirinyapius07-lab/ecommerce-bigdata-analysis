@@ -257,7 +257,7 @@ def customer_rfm_summary(data: pd.DataFrame) -> pd.DataFrame:
     if sales.empty:
         return pd.DataFrame(columns=columns)
 
-    snapshot_date = sales["InvoiceDate"].max().normalize() + pd.Timedelta(days=1)
+    snapshot_date = sales["InvoiceDate"].max().normalize() + pd.DateOffset(days=1)
     customers = (
         sales.groupby("CustomerID", as_index=False)
         .agg(
