@@ -49,7 +49,9 @@ ecommerce-bigdata-analysis/
 │   └── data_loader.py
 ├── tests/
 │   ├── test_analysis.py
-│   └── test_data_loader.py
+│   ├── test_data_loader.py
+│   ├── test_sales_summary.py
+│   └── test_customer_country_analysis.py
 ├── app.py
 ├── src/inspect_data.py
 ├── src/analyze_data.py
@@ -104,4 +106,4 @@ Customer identifiers can be missing in the source data. Customer counts and cust
 
 ## Project status
 
-Initial analysis stage: reusable CSV/Excel loading, explicit quality indicators, qualifying-sales summaries, monthly aggregation, ranked products, the dashboard baseline, automated tests, and CI checks. Analysis rules are being extended incrementally and the Spark stage remains planned.
+Current stage: reusable CSV/Excel loading, explicit quality indicators, qualifying-sales summaries, monthly and country aggregation, ranked products, customer RFM summaries, high-quantity exception review, an interactive dashboard, automated tests, and CI checks. The Spark stage remains planned.
